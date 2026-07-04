@@ -34,6 +34,19 @@ Both FastAPI services (`local-api`, `cloud-api`) follow a hexagonal architecture
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat-square&logo=fastapi&logoColor=white) ![uv](https://img.shields.io/badge/uv-DE5FE9?style=flat-square&logo=uv&logoColor=white) ![Angular](https://img.shields.io/badge/Angular-DD0031?style=flat-square&logo=angular&logoColor=white) ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white) ![Electron](https://img.shields.io/badge/Electron-191970?style=flat-square&logo=electron&logoColor=white) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white) ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white) ![AWS](https://img.shields.io/badge/AWS-232F3E?style=flat-square&logo=amazonwebservices&logoColor=white) ![Terraform](https://img.shields.io/badge/Terraform-7B42BC?style=flat-square&logo=terraform&logoColor=white)
 
+## Testing
+
+TDD going forward: for each issue, write the failing test first (domain/application logic, not framework glue), then the code that makes it pass.
+
+| App | Runner | Command |
+|---|---|---|
+| `apps/local-api` | pytest | `uv run pytest` |
+| `services/cloud-api` | pytest | `uv run pytest` |
+| `apps/frontend` | Vitest (via Angular CLI) | `npx ng test --watch=false` |
+| `apps/desktop` | Vitest | `npm test` |
+
+The hexagonal architecture is what makes this practical: `application` use cases are tested against fake ports (in-memory test doubles for `domain` ABCs), no FastAPI, SQLite, or Electron involved. Adapters (`infrastructure`, `LocalApiSidecar`) get their own focused tests — SQLite adapters against a real temp database, process/network adapters (Electron sidecar) against mocked `node:child_process`/`node:http`.
+
 ## Roadmap
 
 - Multi-tenant SaaS: one cloud deployment serving multiple businesses, with accounts and billing

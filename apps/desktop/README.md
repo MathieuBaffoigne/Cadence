@@ -14,3 +14,11 @@ Build the frontend first (`../frontend`: `npx ng build`), then:
 npm run build
 npm start
 ```
+
+## Test
+
+```
+npm test
+```
+
+Vitest, `node:child_process` and `node:http` mocked (see `src/local-api-sidecar.spec.ts`) — no real process spawned, no real network call.

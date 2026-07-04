@@ -31,3 +31,11 @@ uv run uvicorn main:app --port 8756
 ```
 uv run ty check
 ```
+
+## Test
+
+```
+uv run pytest
+```
+
+TDD: write the test against `application`/`domain` first, using a fake implementation of the relevant port (see `tests/application/test_health.py`) — no SQLite or FastAPI needed for that layer. Adapters in `infrastructure` get their own tests against the real thing (e.g. a temp SQLite file).
