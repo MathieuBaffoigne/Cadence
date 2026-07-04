@@ -1,0 +1,11 @@
+<main>
+  <h1>{{ title() }}</h1>
+
+  @if (health()) {
+    <p>Local API: {{ health()!.status }} ({{ health()!.db }}, ping #{{ health()!.ping_count }})</p>
+  } @else if (error()) {
+    <p>{{ error() }}</p>
+  } @else {
+    <p>Contacting local API…</p>
+  }
+</main>
