@@ -1,24 +1,30 @@
-# Desktop shell (Electron)
+# Desktop shell (Tauri)
 
 Packages the Angular frontend into an installable, offline-capable desktop app.
 
 On startup, spawns the local FastAPI sidecar (`../local-api`, via `uv run uvicorn`) as a child process, waits for it to be healthy, then opens the main window loading the built Angular app (`../frontend/dist/frontend/browser`).
 
-TypeScript, strict mode. `LocalApiSidecar` owns the sidecar process lifecycle; `CadenceApplication` owns the Electron window lifecycle.
+Rust. `LocalApiSidecar` (`src-tauri/src/sidecar.rs`) owns the sidecar process lifecycle; wired into the Tauri app lifecycle in `src-tauri/src/lib.rs` (`setup` starts it, `ExitRequested` stops it).
 
 ## Run
 
-Build the frontend first (`../frontend`: `npx ng build`), then:
+```
+cargo tauri dev
+```
+
+This runs `beforeDevCommand`/`beforeBuildCommand` from `src-tauri/tauri.conf.json` automatically (starts the Angular dev server), builds the Rust binary, spawns the `local-api` sidecar, and opens the window.
+
+## Build
 
 ```
-npm run build
-npm start
+cargo tauri build
 ```
 
 ## Test
 
 ```
-npm test
+cd src-tauri
+cargo test
 ```
 
-Vitest, `node:child_process` and `node:http` mocked (see `src/local-api-sidecar.spec.ts`) — no real process spawned, no real network call.
+Sidecar readiness/retry logic is tested against a real (but bare-bones, in-test) TCP server — no mocking of the process or HTTP layer, see `src-tauri/src/sidecar.rs`.
