@@ -1,14 +1,20 @@
 import sqlite3
 from pathlib import Path
 
-from alembic import command
-from alembic.config import Config
-
-MIGRATIONS_DIR = Path(__file__).resolve().parents[2] / "migrations"
+from tests.conftest import run_migrations
 
 EXPECTED_TABLES: dict[str, set[str]] = {
     "clients": {"id", "name", "email", "phone", "created_at", "updated_at"},
     "employees": {"id", "name", "role", "created_at", "updated_at"},
+    "employee_availabilities": {
+        "id",
+        "employee_id",
+        "day_of_week",
+        "start_time",
+        "end_time",
+        "created_at",
+        "updated_at",
+    },
     "plannings": {
         "id",
         "employee_id",
@@ -38,13 +44,6 @@ EXPECTED_TABLES: dict[str, set[str]] = {
 }
 
 
-def _run_migrations(db_path: Path) -> None:
-    config = Config()
-    config.set_main_option("script_location", str(MIGRATIONS_DIR))
-    config.set_main_option("sqlalchemy.url", f"sqlite:///{db_path}")
-    command.upgrade(config, "head")
-
-
 def _columns(db_path: Path, table: str) -> set[str]:
     conn = sqlite3.connect(db_path)
     try:
@@ -60,7 +59,7 @@ class TestSchemaMigrations:
     ) -> None:
         db_path = tmp_path / "test.db"
 
-        _run_migrations(db_path)
+        run_migrations(db_path)
 
         for table, expected_columns in EXPECTED_TABLES.items():
             assert expected_columns <= _columns(db_path, table)
@@ -70,7 +69,7 @@ class TestSchemaMigrations:
     ) -> None:
         db_path = tmp_path / "test.db"
 
-        _run_migrations(db_path)
+        run_migrations(db_path)
 
         for table in EXPECTED_TABLES:
             assert "updated_at" in _columns(db_path, table)

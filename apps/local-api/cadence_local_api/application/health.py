@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from cadence_local_api.domain.ports import HealthRepository
+from cadence_local_api.domain.ports.health_repository import HealthRepository
 
 
 @dataclass(frozen=True)
@@ -10,16 +10,16 @@ class HealthStatus:
     ping_count: int
 
 
+@dataclass
 class CheckHealthUseCase:
     """Application layer: orchestrates the health check, independent of FastAPI or SQLite."""
 
-    def __init__(self, health_repository: HealthRepository) -> None:
-        self._health_repository = health_repository
+    health_repository: HealthRepository
 
     def execute(self) -> HealthStatus:
-        self._health_repository.record_ping()
+        self.health_repository.record_ping()
         return HealthStatus(
             status="ok",
             db="sqlite",
-            ping_count=self._health_repository.count_pings(),
+            ping_count=self.health_repository.count_pings(),
         )

@@ -1,5 +1,5 @@
 from cadence_local_api.application.health import CheckHealthUseCase, HealthStatus
-from cadence_local_api.domain.ports import HealthRepository
+from cadence_local_api.domain.ports.health_repository import HealthRepository
 
 
 class FakeHealthRepository(HealthRepository):

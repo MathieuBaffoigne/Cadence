@@ -1,18 +1,21 @@
 import sqlite3
+from dataclasses import dataclass
 from pathlib import Path
 
-from cadence_local_api.domain.ports import HealthRepository
+from cadence_local_api.domain.ports.health_repository import HealthRepository
 
 
+@dataclass
 class SqliteHealthRepository(HealthRepository):
     """Adapter: implements the HealthRepository port using SQLite."""
 
-    def __init__(self, db_path: Path) -> None:
-        self._db_path: Path = db_path
+    db_path: Path
+
+    def __post_init__(self) -> None:
         self._ensure_schema()
 
     def _connect(self) -> sqlite3.Connection:
-        return sqlite3.connect(self._db_path)
+        return sqlite3.connect(self.db_path)
 
     def _ensure_schema(self) -> None:
         conn = self._connect()

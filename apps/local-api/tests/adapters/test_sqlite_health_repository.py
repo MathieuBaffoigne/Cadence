@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from cadence_local_api.infrastructure.sqlite_health_repository import (
+from cadence_local_api.adapters.sqlite_health_repository import (
     SqliteHealthRepository,
 )
 
