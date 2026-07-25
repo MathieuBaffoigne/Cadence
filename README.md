@@ -6,7 +6,7 @@ Built as a complement to existing point-of-sale tools, not a replacement: Cadenc
 
 ## v1 scope
 
-Built and validated with a real local business (a flower shop) as first user.
+Designed around the real workflow of a local flower shop, the first target user.
 
 - **Team planning** — staff scheduling under constraints (availability, seasonal peaks like Valentine's Day or Mother's Day)
 - **Invoicing & quotes** — quote-to-invoice workflow for event orders, status tracking, French legal invoice requirements
@@ -29,6 +29,17 @@ infra/terraform/    AWS infrastructure as code
 Local SQLite is the source of truth offline. Each record carries an `updated_at`; when the app reconnects, it pushes local changes and pulls remote ones, resolving conflicts last-write-wins.
 
 Both FastAPI services (`local-api`, `cloud-api`) follow a hexagonal architecture (ports & adapters): a framework-free `domain` layer (ABCs as ports), `application` use cases, and `infrastructure`/`api` adapters. Fully typed — Python type hints checked with `ty`, TypeScript in strict mode. The desktop shell (`apps/desktop/src-tauri`) is Rust: it spawns and owns the `local-api` sidecar process for the lifetime of the app.
+
+## Getting started
+
+Prerequisites: [uv](https://docs.astral.sh/uv/), Node.js + npm, the Rust toolchain and the [Tauri CLI](https://v2.tauri.app/start/prerequisites/).
+
+```
+cd apps/desktop
+cargo tauri dev
+```
+
+This single command starts the Angular dev server, builds the Rust shell, spawns the `local-api` sidecar (`uv run uvicorn`, dependencies installed automatically by `uv`), and opens the desktop window. See `apps/desktop/README.md` for what happens under the hood.
 
 ## Stack
 
